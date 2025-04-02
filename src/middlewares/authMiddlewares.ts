@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv"
 dotenv.config();
 
-type ContextType = {
+export type ContextType = {
 	req: Request;
 	res: Response;
 }

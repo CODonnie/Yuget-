@@ -4,10 +4,13 @@ import { expressMiddleware } from "@apollo/server/express4";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import gql from "graphql-tag";
+import connectDb from "./config/dbConnect";
+import typeDefs from "./schema";
+import resolvers from "./resolvers";
 
 //init
 dotenv.config();
+connectDb();
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -15,16 +18,8 @@ const port = process.env.PORT || 4000;
 const startServer = async () => {
   //GRAPHQL server
   const server = new ApolloServer({
-		typeDefs: gql`
-		type Query{
-			hello: String
-		}
-		`,
-		resolvers: {
-			Query: {
-				hello: () => "hello, stranger"
-			}
-		},
+		typeDefs,
+		resolvers,
 	});
 
   await server.start();

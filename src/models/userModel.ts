@@ -8,9 +8,9 @@ interface IUser extends Document {
 };
 
 const UserSchema = new Schema<IUser> ({
-	name: { types: String, required: true },
-	email: { types: String, required: true, unique: true },
-	password: { types: String, required: true },
+	name: { type: String, required: true },
+	email: { type: String, required: true, unique: true },
+	password: { type: String, required: true },
 }, { timestamps: true });
 
 UserSchema.pre<IUser>("save", async function(next) {
