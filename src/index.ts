@@ -1,40 +1,31 @@
-import express, {RequestHandler} from "express";
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
+import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import connectDb from "./config/dbConnect";
-import typeDefs from "./schema";
-import resolvers from "./resolvers";
+import fileRouter from "./route/fileUploadRoute";
+import authRouter from "./route/authRoutes";
+import { errorHandler, notFound } from "./middlewares/errorMiddleware";
 
-//init
+//Init
 dotenv.config();
 connectDb();
 const app = express();
 const port = process.env.PORT || 4000;
 
-//Middleware
-const startServer = async () => {
-  //GRAPHQL server
-  const server = new ApolloServer({
-		typeDefs,
-		resolvers,
-	});
+//Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-  await server.start();
+//Routes
+app.use("/api/auth", authRouter);
+app.use("/api", fileRouter);
+app.use("/uploads", express.static("uploads"));
 
-  app.use(cookieParser());
-  app.use(
-    "/",
-		cors<cors.CorsRequest>(),
-		express.json(),
-    expressMiddleware(server, {
-      context: async ({ req, res }) => ({ req, res }),
-    }) as unknown as RequestHandler
-  );
+//Error Middlewares
+app.use(notFound);
+app.use(errorHandler);
 
-  app.listen(port, () => console.log(`server running on localhost:${port}`));
-};
-
-startServer();
+app.listen(port, () => console.log(`server running on localhost:${port}`));
