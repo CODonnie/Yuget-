@@ -3,7 +3,11 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-const guard = (req: Request, res: Response, next: NextFunction) => {
+export interface AuthRequest extends Request {
+	user?: { id: string, role: string };
+}
+
+const guard = (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const token =
       req.cookies.yugetToken || req.headers.authorization?.split(" ")[1];
@@ -14,12 +18,12 @@ const guard = (req: Request, res: Response, next: NextFunction) => {
     }
 
     const secret = process.env.JWT_SECRET as string;
-    const decoded = jwt.verify(token, secret);
-    (req as any).user = decoded;
+    const decoded = jwt.verify(token, secret) as {id: string, role: string};
+    (req as any).user = { id: decoded.id, role: decoded.role };
     next();
   } catch (error) {
     console.log(`auth shiko - ${error}`);
-    res.status(500).json({ message: `auth error ${error}` });
+    res.status(403).json({ message: `auth error ${error}` });
   }
 };
 

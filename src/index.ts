@@ -6,7 +6,7 @@ import connectDb from "./config/dbConnect";
 import fileRouter from "./route/fileUploadRoute";
 import authRouter from "./route/authRoutes";
 import { errorHandler, notFound } from "./middlewares/errorMiddleware";
-
+import fileRetRouter from "./route/fileRetrievalRoute";
 //Init
 dotenv.config();
 connectDb();
@@ -22,6 +22,7 @@ app.use(cookieParser());
 //Routes
 app.use("/api/auth", authRouter);
 app.use("/api", fileRouter);
+app.use("/api", fileRetRouter);
 app.use("/uploads", express.static("uploads"));
 
 //Error Middlewares

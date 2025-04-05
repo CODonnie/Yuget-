@@ -9,7 +9,7 @@ dotenv.config();
 //@route - POST/api/auth/register
 export const CreateUser = async (req: Request, res: Response) => {
 	try {
-		const { name, email, password } = req.body;
+		const { name, email, role, password } = req.body;
 
 		let user = await User.findOne({ email });
 		if(user) {
@@ -17,7 +17,7 @@ export const CreateUser = async (req: Request, res: Response) => {
 			throw new Error(`User ${email} already exists`);
 		}
 
-		user = new User({ name, email, password });
+		user = new User({ name, email, role, password });
 		await user.save();
 
 		res.status(200).json({ message: "user created", user });
@@ -43,7 +43,7 @@ export const loginUser = async (req: Request, res: Response) => {
 		if(!isMatch) throw new Error("incorrect credentials");
 
 		const secret = process.env.JWT_SECRET as string;
-		const token = jwt.sign({id: user.id}, secret, { expiresIn: "1d" });
+		const token = jwt.sign({ id: user.id, role: user.role }, secret, { expiresIn: "1d" });
 
 		res.cookie("yugetToken", token, {
 			httpOnly: true,
