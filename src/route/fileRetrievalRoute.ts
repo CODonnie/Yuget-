@@ -1,10 +1,12 @@
 import express from "express";
 import guard from "../middlewares/authMiddlewares";
-import { getAllFiles, getFiles } from "../controllers/fileController";
+import { deleteFiles, downloadFile, getAllFiles, getFiles } from "../controllers/fileController";
 
 const fileRetRouter = express.Router();
 
-fileRetRouter.get("/files-get/:id", guard, getFiles);
-fileRetRouter.get("/all-files-get", guard, getAllFiles);
+fileRetRouter.get("/file/:id", guard, getFiles);
+fileRetRouter.get("/all-files", guard, getAllFiles);
+fileRetRouter.delete("/file/:id", guard, deleteFiles);
+fileRetRouter.get("/file/:id/download", guard, downloadFile);
 
 export default fileRetRouter;
