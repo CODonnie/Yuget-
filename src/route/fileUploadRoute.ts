@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import upload from "../middlewares/stroageMiddleware";
 import FileModel from "../models/fileModel";
 import guard from "../middlewares/authMiddlewares";
+import uploadRateLimit from "../utils/rateLimiter";
 
 const uploadFile = async (req: Request, res: Response) => {
   try {
@@ -32,6 +33,6 @@ const uploadFile = async (req: Request, res: Response) => {
 
 const fileRouter = express.Router();
 
-fileRouter.post("/upload", guard, upload.single("file"), uploadFile);
+fileRouter.post("/upload", guard, uploadRateLimit, upload.single("file"), uploadFile);
 
 export default fileRouter;
